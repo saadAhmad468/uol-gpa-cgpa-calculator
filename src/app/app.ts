@@ -225,6 +225,39 @@ export class App implements OnInit {
     });
   }
 
+  // FAQ accordion state (ids like 'faq1', 'faq2', ...)
+  private faqOpen = new Set<string>();
+
+  toggleFaq(id: string): void {
+    if (this.faqOpen.has(id)) {
+      this.faqOpen.delete(id);
+    } else {
+      this.faqOpen.add(id);
+    }
+  }
+
+  isFaqOpen(id: string): boolean {
+    return this.faqOpen.has(id);
+  }
+
+  // Determine CGPA circle color based on value
+  getCgpaColorClass(): string {
+    if (this.currentCgpa === null) return 'gray';
+    if (this.currentCgpa >= 3.5) return 'green';
+    if (this.currentCgpa >= 3.0) return 'blue';
+    if (this.currentCgpa >= 2.0) return 'orange';
+    return 'red';
+  }
+
+  // Determine GPA circle color based on value
+  getGpaColorClass(): string {
+    if (this.currentGpa === 0 || this.currentGpa === null) return 'gray';
+    if (this.currentGpa >= 3.5) return 'green';
+    if (this.currentGpa >= 3.0) return 'blue';
+    if (this.currentGpa >= 2.0) return 'orange';
+    return 'red';
+  }
+
   trackByIndex(index: number): number {
     return index;
   }

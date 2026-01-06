@@ -1,0 +1,21 @@
+PATCH for moving GPA Result card to bottom:
+
+In src/app/app.css, after line 91 (.highlight rule), add:
+
+.gpa-result-card {
+  grid-column: 1 / -1;
+  margin-top: 2rem;
+}
+
+Also modify the .grid rule (around line 36) to add auto-flow:
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-auto-flow: dense;
+  gap: 1.2rem;
+}
+
+And make left-column take only 1st column:
+.left-column {
+  grid-column: 1;
+}

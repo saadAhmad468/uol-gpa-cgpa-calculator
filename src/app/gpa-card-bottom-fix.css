@@ -1,0 +1,21 @@
+/* Move GPA Result Card to Bottom */
+
+/* Make left-column explicitly first column */
+.left-column {
+  grid-column: 1;
+}
+
+/* Make GPA result card span full width and appear at bottom */
+.gpa-result-card {
+  grid-column: 1 / -1;
+  margin-top: 1rem;
+  order: 10;
+}
+
+/* Responsive: At mobile, grid is already single column */
+@media (max-width: 900px) {
+  .gpa-result-card {
+    grid-column: 1;
+    order: 10;
+  }
+}

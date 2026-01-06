@@ -1,24 +1,36 @@
-<div class="page-wrapper">
-  <header class="page-header">
-    <div>
-      <h1>UOL GPA &amp; CGPA Calculator</h1>
-      <p class="subtitle">
-        University of Lahore – GPA &amp; weighted CGPA calculator based on the official grading
-        policy.
-      </p>
-    </div>
-  </header>
+<header class="page-header">
+<section class="seo-intro">
+  <h1>UOL GPA & CGPA Calculator</h1>
 
+  <p>
+    This UOL GPA & CGPA Calculator helps University of Lahore students calculate
+    their semester GPA and cumulative CGPA according to the official UOL grading
+    policy. Enter your course credit hours and expected grades to estimate your
+    academic performance accurately.
+  </p>
+</section>
+<br>
+<br>
+  </header>
+  <br>
+<div class="page-wrapper">
   <main class="grid">
     <div class="left-column">
       <!-- GPA: Course Entry -->
       <section class="card">
-        <h2 title="GPA is the weighted average of your course grades in a single semester.">
-          Semester GPA Calculator
-        </h2>
+        <div class="cgpa-header">
+          <div>
+            <h2 title="GPA is the weighted average of your course grades in a single semester.">
+              <span class="sizeset" style="font-weight: bold;">Semester GPA Calculator</span>
+            </h2>
+          </div>
+          <div class="cgpa-highlight" [class.muted-highlight]="currentGpa === 0 || currentGpa === null" [class.highlight-pulse]="isGpaPulsing">
+            <span class="cgpa-label">GPA</span>
+            <span class="cgpa-value-big">{{ currentGpa && currentGpa > 0 ? (currentGpa | number: '1.2-2') : '—' }}</span>
+          </div>
+        </div>
         <p class="section-description">
-          Add your courses for the current semester. GPA updates in real time so you can estimate
-          your result before it is released.
+          Add your courses for the current semester
         </p>
 
         <form [formGroup]="gpaForm" class="form-section" novalidate>
@@ -81,28 +93,15 @@
               Reset courses
             </button>
           </div>
-
-          <p class="helper-text">
-            Tip: Use this to plan your academic load each semester and keep your GPA on target.
-          </p>
-
-          <div class="info-note">
-            <strong>UOL Grading:</strong>
-            A = 4.00, A- = 3.75, B+ = 3.50, B = 3.00, C+ = 2.50, C = 2.00,
-            D+ = 1.50, D = 1.00, F = 0.00. Credit hours allowed: 1–4.
-          </div>
         </form>
       </section>
+      <br>
 
       <!-- CGPA Calculator -->
       <section class="card cgpa-card">
       <div class="cgpa-header" title="CGPA is the weighted average of all your semesters combined.">
         <div>
-          <h2>CGPA Calculator (Multi-Semester)</h2>
-          <p class="section-description">
-            Provide your GPA and total credit hours for each completed semester.
-            CGPA is calculated using weighted credit hours (not simple average).
-          </p>
+          <h2> <span  style="font-size:1.3rem ; font-weight: bold;">CGPA Calculator (Multi-Semester)</span></h2>
         </div>
         <div class="cgpa-highlight">
           <span class="cgpa-label">CGPA</span>
@@ -113,7 +112,7 @@
       </div>
 
       <form [formGroup]="semestersForm" class="form-section" novalidate>
-        <div class="table-header">
+        <div class="table-header"  style="padding-top: 200;">
           <span>Semester</span>
           <span>Semester GPA</span>
           <span>Credit Hours</span>
@@ -186,12 +185,6 @@
             {{ currentTotalCgpaCredits }}
           </span>
         </div>
-        <div class="result-row">
-          <span>CGPA</span>
-          <span class="result-value">
-            {{ currentCgpa | number: '1.2-2' }}
-          </span>
-        </div>
       </div>
 
       <ng-template #noCgpa>
@@ -205,30 +198,223 @@
 
     <!-- GPA Result -->
     <section class="card highlight gpa-result-card">
-      <h2 title="Your semester GPA based on UOL's official grading policy.">
-        Semester GPA Result
+      <h2 title="Your semester GPA based on UOL's official grading policy. ">
+        <span class="sizeset" style="font-weight: 750;">GPA & CGPA Result</span>
       </h2>
-      <div class="result-row">
-        <span>Total Credit Hours</span>
-        <span class="result-value">
-          {{ currentTotalCreditHours || 0 }}
-        </span>
+
+      <!-- Two rings side-by-side container -->
+      <div class="gpa-rings-container">
+        <!-- Semester GPA Ring -->
+        <div class="progress-ring-item" [class.empty]="currentGpa === 0 || currentGpa === null" [ngClass]="'color-' + getGpaColorClass()">
+          <div class="progress-ring-wrapper">
+            <svg class="progress-circle" viewBox="0 0 120 120" role="img" [attr.aria-label]="currentGpa > 0 ? 'Semester GPA: ' + (currentGpa | number: '1.2-2') + ' out of 4.00' : 'Semester GPA indicator - no data'">
+              <!-- Background circle -->
+              <circle cx="60" cy="60" r="54" class="progress-circle-bg" />
+              <!-- Progress circle -->
+              <circle cx="60" cy="60" r="54" class="progress-circle-progress" [style.stroke-dasharray]="currentGpa > 0 ? ((currentGpa / 4) * 339.29) + ' 339.29' : '0 339.29'" />
+            </svg>
+            <div class="progress-center-text">
+              <ng-container *ngIf="currentGpa > 0; else emptyGpaState">
+                <div class="progress-value">{{ currentGpa | number: '1.2-2' }}</div>
+                <div class="progress-max">/ 4.00</div>
+              </ng-container>
+              <ng-template #emptyGpaState>
+                <div class="progress-empty-text">—</div>
+              </ng-template>
+            </div>
+          </div>
+          <div class="progress-label-text">
+            <ng-container *ngIf="currentGpa > 0; else emptyGpaLabel">
+              Semester GPA
+            </ng-container>
+            <ng-template #emptyGpaLabel>
+              <span class="muted">Add courses</span>
+            </ng-template>
+          </div>
+        </div>
+
+        <!-- CGPA Ring -->
+        <div class="progress-ring-item" [class.empty]="currentCgpa === null" [ngClass]="'color-' + getCgpaColorClass()">
+          <div class="progress-ring-wrapper">
+            <svg class="progress-circle" viewBox="0 0 120 120" role="img" [attr.aria-label]="currentCgpa !== null ? 'CGPA: ' + (currentCgpa | number: '1.2-2') + ' out of 4.00' : 'CGPA indicator - no data'">
+              <!-- Background circle -->
+              <circle cx="60" cy="60" r="54" class="progress-circle-bg" />
+              <!-- Progress circle -->
+              <circle cx="60" cy="60" r="54" class="progress-circle-progress" [style.stroke-dasharray]="currentCgpa !== null ? ((currentCgpa / 4) * 339.29) + ' 339.29' : '0 339.29'" />
+            </svg>
+            <div class="progress-center-text">
+              <ng-container *ngIf="currentCgpa !== null; else emptyCgpaState">
+                <div class="progress-value">{{ currentCgpa | number: '1.2-2' }}</div>
+                <div class="progress-max">/ 4.00</div>
+              </ng-container>
+              <ng-template #emptyCgpaState>
+                <div class="progress-empty-text">—</div>
+              </ng-template>
+            </div>
+          </div>
+          <div class="progress-label-text">
+            <ng-container *ngIf="currentCgpa !== null; else emptyCgpaLabel">
+              Current CGPA
+            </ng-container>
+            <ng-template #emptyCgpaLabel>
+              <span class="muted">Add semesters to calculate CGPA</span>
+            </ng-template>
+          </div>
+        </div>
       </div>
-      <div class="result-row">
-        <span>GPA</span>
-        <span class="result-value gpa-value" [class.result-pulse]="isGpaPulsing">
-          {{ currentGpa | number: '1.2-2' }}
-        </span>
+
+      <!-- Info section below rings -->
+      <div class="gpa-info-section">
+        <div class="result-row">
+          <span class="sizeset">Total Credit Hours</span>
+          <span class="result-value sizeset">
+            {{ currentTotalCreditHours || 0 }}
+          </span>
+        </div>
       </div>
-      <p class="hint">
-        If you have no courses, GPA is defined as 0.00.
-      </p>
-      <p class="helper-text">
-        Students often use this to double-check manual GPA calculations before submitting forms.
-      </p>
     </section>
 
   </main>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <section class="seo-content">
+  <h2>UOL GPA & CGPA Calculator</h2>
+
+  <p>
+    This UOL GPA & CGPA Calculator is designed for students of the University of Lahore.
+    It follows the official UOL grading system and allows accurate calculation of
+    semester GPA and cumulative CGPA using credit-weighted formulas.
+  </p>
+
+  <h3>How GPA Is Calculated at UOL</h3>
+  <p>
+    GPA is calculated by dividing total quality points by total credit hours in a
+    semester. Each grade carries a specific grade point value as defined by UOL.
+  </p>
+
+  <h3>Difference Between GPA and CGPA</h3>
+  <p>
+    GPA represents academic performance in a single semester, while CGPA reflects
+    overall performance across all semesters at the University of Lahore.
+  </p>
+</section>
+
+<br>
+<br>
+
+<section class="seo-faq">
+  <h2>Frequently Asked Questions about GPA & CGPA at UOL</h2>
+
+  <div class="faq-container" role="region" aria-label="FAQ">
+
+    <div class="faq-item" id="faq-item-1">
+      <h3>
+        <button class="faq-toggle" type="button" (click)="toggleFaq('faq1')" [attr.aria-expanded]="isFaqOpen('faq1')" aria-controls="faq1-panel">
+          What is the minimum CGPA required to graduate from the University of Lahore?
+          <span class="faq-icon" aria-hidden="true"></span>
+        </button>
+      </h3>
+      <div id="faq1-panel" class="faq-panel" [class.open]="isFaqOpen('faq1')">
+        <p>
+          To get a degree from The University of Lahore (UOL), you generally need a minimum CGPA of 2.00 for undergraduate (BS) programs and 2.50 for postgraduate (MS/MPhil) programs, though specific programs might have higher requirements, often around 2.50 CGPA for Master's/Ph.D. admissions; check your specific program's admission guide as requirements can vary. 
+          For Undergraduate (BS) Degrees:
+          Minimum CGPA: 2.00 out of 4.00. 
+          For Postgraduate (MS/MPhil/Master's) Degrees:
+          Standard Requirement: 2.50 out of 4.00 CGPA or 60% marks in your previous degree.
+          Program Variations: Some programs might have stricter entry criteria, like 2.50 CGPA for Computer Science/IT. 
+          Key Points to Remember:
+          Program-Specific: Always check the official Admission Guide for your specific program (e.g., CS, Law, Business) for precise CGPA requirements, as they can differ slightly.
+          HEC Guidelines: UOL follows HEC guidelines for grading and conversion.
+          Admission vs. Graduation: Note that admission requirements (e.g., 2.50 for Master's) can be higher than the minimum to complete the degree (e.g., 2.00 for BS). 
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item" id="faq-item-2">
+      <h3>
+        <button class="faq-toggle" type="button" (click)="toggleFaq('faq2')" [attr.aria-expanded]="isFaqOpen('faq2')" aria-controls="faq2-panel">
+          Does repeating a course improve CGPA at UOL?
+          <span class="faq-icon" aria-hidden="true"></span>
+        </button>
+      </h3>
+      <div id="faq2-panel" class="faq-panel" [class.open]="isFaqOpen('faq2')">
+        <p>
+          Yes. When a student repeats a course at UOL, the new grade replaces the previous
+          failed grade in CGPA calculation according to university academic rules, which
+          can improve the overall CGPA.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item" id="faq-item-3">
+      <h3>
+        <button class="faq-toggle" type="button" (click)="toggleFaq('faq3')" [attr.aria-expanded]="isFaqOpen('faq3')" aria-controls="faq3-panel">
+          What is the PROBATION POLICY of Univeristy of Lahore regarding CGPA?
+          <span class="faq-icon" aria-hidden="true"></span>
+        </button>
+      </h3>
+      <div id="faq3-panel" class="faq-panel" [class.open]="isFaqOpen('faq3')">
+        <p>
+        Probation is a status granted to the student whose academic performance falls below the minimum university
+        standards (2.0 CGPA for under graduate programme and 2.5 CGPA for Master and MPhil programme)
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item" id="faq-item-4">
+      <h3>
+        <button class="faq-toggle" type="button" (click)="toggleFaq('faq4')" [attr.aria-expanded]="isFaqOpen('faq4')" aria-controls="faq4-panel">
+          How many credit hours can a student register per semester at UOL?
+          <span class="faq-icon" aria-hidden="true"></span>
+        </button>
+      </h3>
+      <div id="faq4-panel" class="faq-panel" [class.open]="isFaqOpen('faq4')">
+        <p>
+          The number of credit hours a student can register per semester at the University
+          of Lahore depends on academic standing and departmental policies. Typically,
+          students register between 15 to 21 credit hours.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item" id="faq-item-5">
+      <h3>
+        <button class="faq-toggle" type="button" (click)="toggleFaq('faq5')" [attr.aria-expanded]="isFaqOpen('faq5')" aria-controls="faq5-panel">
+          Is CGPA used for merit scholarships and academic standing at UOL?
+          <span class="faq-icon" aria-hidden="true"></span>
+        </button>
+      </h3>
+      <div id="faq5-panel" class="faq-panel" [class.open]="isFaqOpen('faq5')">
+        <p>
+          Yes. CGPA is a key factor used by the University of Lahore to determine academic
+          standing, merit-based scholarships, and eligibility for awards or distinctions.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item" id="faq-item-6">
+      <h3>
+        <button class="faq-toggle" type="button" (click)="toggleFaq('faq6')" [attr.aria-expanded]="isFaqOpen('faq6')" aria-controls="faq6-panel">
+          Can this GPA & CGPA calculator be used for all UOL programs?
+          <span class="faq-icon" aria-hidden="true"></span>
+        </button>
+      </h3>
+      <div id="faq6-panel" class="faq-panel" [class.open]="isFaqOpen('faq6')">
+        <p>
+          This calculator is designed to follow the general grading and credit hour system
+          used by the University of Lahore. While it works for most programs, students
+          should always consult their department for program-specific rules.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
 
   <footer class="page-footer">
     <span>UOL GPA &amp; CGPA Calculator – University of Lahore</span>
